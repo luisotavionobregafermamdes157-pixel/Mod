@@ -3,41 +3,58 @@ package dev.autotool;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
+/**
+ * Selects the fastest item already present in the hotbar when the player
+ * starts a new block-mining click.
+ */
 public final class AutoToolClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientPreAttackCallback.EVENT.register(AutoToolClient::onPreAttack);
     }
 
-    private static boolean onPreAttack(Minecraft client, Player player, int clickCount) {
-        if (clickCount == 0 || client.level == null || client.gameMode == null || player.isSpectator()) {
+    private static boolean onPreAttack(Minecraft client, LocalPlayer player, int clickCount) {
+        // Fabric calls this event while clicking and while holding the mouse.
+        // A non-zero clickCount identifies the initial click.
+        if (clickCount == 0
+                || client.level == null
+                || client.gameMode == null
+                || player.isSpectator()) {
             return false;
         }
 
         HitResult hit = client.hitResult;
-        if (!(hit instanceof BlockHitResult blockHit) || hit.getType() != HitResult.Type.BLOCK) {
+        if (!(hit instanceof BlockHitResult blockHit)
+                || hit.getType() != HitResult.Type.BLOCK) {
             return false;
         }
 
         BlockPos pos = blockHit.getBlockPos();
         BlockState state = client.level.getBlockState(pos);
-        if (state.isAir()) return false;
+        if (state.isAir()) {
+            return false;
+        }
 
         Inventory inventory = player.getInventory();
-        int bestSlot = inventory.selected;
-        float bestSpeed = speedFor(inventory.getItem(bestSlot), state);
+        int currentSlot = inventory.getSelectedSlot();
+        int bestSlot = currentSlot;
+        float bestSpeed = speedFor(inventory.getItem(currentSlot), state);
 
-        for (int slot = 0; slot < 9; slot++) {
+        // Only inspect the hotbar. Do not move or rearrange inventory items.
+        for (int slot = 0; slot < Inventory.getSelectionSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
+
             float speed = speedFor(stack, state);
             if (speed > bestSpeed) {
                 bestSpeed = speed;
@@ -45,7 +62,11 @@ public final class AutoToolClient implements ClientModInitializer {
             }
         }
 
-        inventory.selected = bestSlot;
+        if (bestSlot != currentSlot) {
+            inventory.setSelectedSlot(bestSlot);
+        }
+
+        // Do not cancel the vanilla attack/mining behavior.
         return false;
     }
 
