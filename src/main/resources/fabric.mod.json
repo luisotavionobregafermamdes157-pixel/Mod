@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "autotool",
+  "version": "${version}",
+  "name": "AutoTool",
+  "description": "Selects the most efficient hotbar tool when block mining starts.",
+  "authors": ["AutoTool"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["dev.autotool.AutoToolClient"] },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
