@@ -3,7 +3,7 @@
   "id": "autotool",
   "version": "${version}",
   "name": "AutoTool",
-  "description": "Selects the most efficient hotbar tool when block mining starts.",
+  "description": "Automatically selects the most efficient hotbar tool and displays item durability on the HUD.",
   "authors": ["AutoTool"],
   "license": "MIT",
   "environment": "client",
