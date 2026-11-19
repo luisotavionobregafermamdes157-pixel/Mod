@@ -11,6 +11,7 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${fabric_api_version}"
 }
 processResources {
     inputs.property "version", project.version
