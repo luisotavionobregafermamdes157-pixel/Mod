@@ -1,9 +1,14 @@
 # AutoTool — Fabric 1.21.11
 
-Client-side mod: when a new block-mining click begins, compares destroy speed
-for the nine hotbar slots and selects the fastest item already in the hotbar.
+Client-side mod for Minecraft Java Edition 1.21.11.
 
-## Runtime requirements
+## Features
+- **Automatic tool selection:** when you start mining a block, the mod compares the destroy speed of the items in your hotbar and selects the fastest one.
+- **Durability HUD:** displays the remaining durability percentage and a color-coded bar for every damageable item in your hotbar. Red means 10% or less, orange means 11–30%, and green means more than 30%.
+- Does not move items or rearrange the inventory.
+- Vanilla handles the actual block-breaking action.
+
+## Requirements
 - Minecraft Java Edition 1.21.11
 - Java 21 to run Minecraft
 - Fabric Loader 0.19.5 or newer
@@ -20,9 +25,3 @@ with the Java runtime required by Minecraft 1.21.11.
 Run `gradle clean build`. The remapped mod JAR is generated at:
 
 `build/libs/autotool-fabric-1.0.0.jar`
-
-## Behavior and limits
-- Only the nine hotbar slots are checked.
-- Items are not moved from the main inventory.
-- The game continues to handle block breaking normally.
-- The selected tool is chosen using the item's block destroy-speed value.
